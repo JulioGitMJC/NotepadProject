@@ -2,9 +2,8 @@ import logo from './logo.svg';
 import './App.css';
 import { useState, useRef } from 'react';
 
-
 function App() {
-  const [text,  setText] = useState('');
+  const [text, setText] = useState('');
   const RefForTextArea = useRef(null);
   const [fontSize, setFontSize] = useState("15px");
 
@@ -17,11 +16,11 @@ function App() {
       textArea.style.height = `${textArea.scrollHeight}px`;
     }
   };
-  
 
   const FontSizeChange = (size) => {
     setFontSize(`${size}px`);
   }
+
   return (
     <div className="App">
 
@@ -60,7 +59,14 @@ function App() {
 
       {/* Content */}          
       <header className="App-header">
-        <textarea ref={RefForTextArea} className='TextArea' placeholder='Type here to create a note.' value={text} onChange={TextAreaChange} style={{ fontSize: fontSize }}></textarea> {/* This is where the user inputs their text */}
+        <textarea 
+          ref={RefForTextArea} 
+          className='TextArea' 
+          placeholder='Type here to create a note.' 
+          value={text} 
+          onChange={TextAreaChange} 
+          style={{ fontSize: fontSize }}
+        ></textarea> {/* This is where the user inputs their text */}
       </header>
     </div>
   );

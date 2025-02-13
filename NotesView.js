@@ -36,10 +36,10 @@ export default class NotesView {
         this.updateNotePreviewVisibility(false);
     }
 
-    _createListItemHTML(id, title, body, updated)   {
+    _createListItemHTML(id, title, body, updated) {
         const MAX_BODY_LENGTH = 60;
 
-         return `
+        return `
             <div class="notes__list-item" data-note-id="${id}">
                 <div class="notes__small-title">${title}</div>
                 <div class="notes__small-body">
@@ -59,10 +59,10 @@ export default class NotesView {
         // Empty List
         notesListContainer.innerHTML = "";
 
-         for (const note of notes) {
+        for (const note of notes) {
             const html = this._createListItemHTML(note.id, note.title, note.body, new Date(note.updated));
 
-            notesListContainer.insertAdjecentHTML("beforeend", html);
+            notesListContainer.insertAdjacentHTML("beforeend", html);
         }
 
         // Add select/delete events for each list item
@@ -71,29 +71,28 @@ export default class NotesView {
                 this.onNoteSelect(noteListItem.dataset.noteId);
             });
 
-        noteListItem.addEventListener("dblclick", () => {
-            const doDelete = confirm("are you sure you want to delete this note?");
+            noteListItem.addEventListener("dblclick", () => {
+                const doDelete = confirm("Are you sure you want to delete this note?");
 
-            if (doDelete) {
-                this.onNoteDelete(noteListItem.dataset.noteId);
-            }
+                if (doDelete) {
+                    this.onNoteDelete(noteListItem.dataset.noteId);
+                }
+            });
         });
-    });
-}
-
+    }
 
     updateActiveNote(note) {
         this.root.querySelector(".notes__title").value = note.title;
         this.root.querySelector(".notes__body").value = note.body;
 
         this.root.querySelectorAll(".notes__list-item").forEach(noteListItem => {
-            noteListItem.classlist.remove("notes__list-item--selected");
+            noteListItem.classList.remove("notes__list-item--selected");
         });
 
         this.root.querySelector(`.notes__list-item[data-note-id="${note.id}"]`).classList.add("notes__list-item--selected");
     }
 
     updateNotePreviewVisibility(visible) {
-        this.root.querySelector(".notes__preview").style.visbility = visible ? "visible" : "hidden";
+        this.root.querySelector(".notes__preview").style.visibility = visible ? "visible" : "hidden";
     }
 }
