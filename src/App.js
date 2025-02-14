@@ -23,7 +23,6 @@ function App() {
 
   return (
     <div className="App">
-
       {/* Menu Bar */}
       <nav className="menu-bar">
         {/* File Menu */}
@@ -56,6 +55,16 @@ function App() {
         </div>
 
       </nav>
+
+      {/* Side Bar */}
+      <div className="Sidebar">
+        <button className="CreateNote">Create Note</button>
+        <div className='NewNote'>
+          <div className='NoteTopic'>This is the note topic</div>
+          <div className='NoteDescription'>This is a test description of the note. There's not much here but me randomly typing as a think of a description.</div>
+        </div>
+        
+      </div>
 
       {/* Content */}          
       <header className="App-header">

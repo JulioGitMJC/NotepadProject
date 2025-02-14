@@ -18,6 +18,7 @@
   /* size of the menu-bar */
   padding: 0px;
   display: flex;
+  
 }
 
 /* menu items property */
@@ -80,13 +81,14 @@
   justify-content: flex-start; /* Align text to the top */
   font-size: calc(2px + 2vmin);
   color: rgb(0, 0, 0);
+  
 }
 
 .App-link {
   color: #61dafb;
 }
 
-<<<<<<< HEAD
+
 
  /* TextArea is the className for our textarea that takes the input of the user's notes */ 
 .TextArea {
@@ -99,6 +101,54 @@
   font-size: 16px;
 }
 
+.Sidebar {
+  height: 100vh;
+  width: 400px;
+  background-color: #ffffff;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center items horizontally */
+  justify-content: flex-start;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  gap: 26px;
+}
 
-=======
->>>>>>> a99787152ffca9254db7eee21abd3f8d6d8a7610
+.CreateNote {
+  align-items: center;
+  margin-top: 10px;
+  padding: 10px;
+  height: 100px;
+  width: 90%;
+  border: 0px;
+  border-radius: 10px;
+  font-size: 30px;
+  font-weight: bold;
+  color: white;
+  background-color:rgb(121, 217, 255);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
+
+.CreateNote:hover {
+  background-color:rgb(94, 209, 255);
+}
+
+.NewNote {
+  text-align: left;
+  background-color: #ffffff;
+  height: 150px;
+  border-radius: 10px;
+  width: 90%;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
+
+.NewNote:hover {
+  background-color: #e6e6e6;
+}
+
+.NoteTopic {
+  padding: 10px;
+  font-size: 20px;
+  font-weight: bold;
+}
