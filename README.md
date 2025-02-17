@@ -1,3 +1,9 @@
+How to run the project:
+1) Extract the folder, then open with VS code
+2) Open a new terminal(MAKE SURE YOU'RE USING CMD NOT POWERSHELL) and run the command npm install
+3) This should install a new folder called nodes_modules, once nodes_modules has been installed you should be able to run the app using the command npm start.
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
