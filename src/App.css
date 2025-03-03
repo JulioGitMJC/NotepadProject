@@ -2,153 +2,325 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.menu-bar {
-  background-color: #b9b9b9;
-  /* size of the menu-bar */
-  padding: 0px;
-  display: flex;
-  
-}
-
-/* menu items property */
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-/* also menu items property */
-.dropbtn {
-  background-color: transparent;
-  border: none;
-  font-size: 13px;
-  /* size of the menu bar buttons */
-  padding: 5px 5px;
-  cursor: pointer;
-  color: #000000;
-}
-
-/* do things when hovering over menu items */
-.dropbtn:hover {
-  background-color: #ffffff;
-
-}
-
-.dropdown-content {
-  display: none; /* hides the dropdown content */
-  position: absolute;
-  background-color: #b9b9b9;
-  min-width: 100px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-  border: 1px solid #000000;
-}
-
-.dropdown-content button {
-  width: 100%;
-  padding: 8px;
-  text-align: left;
-  border: none;
-  background: none;
-  cursor: pointer;
-}
-
-/* do things when hovering over the items in the dropdown*/
-.dropdown-content button:hover {
-  background-color: #ffffff;
-}
-
-/* Show dropdown on hover */
-.dropdown:hover .dropdown-content {
-  display: block; /* displays the content when mouse hovers over item */
-}
-
-.App-header {
-  background-color: #ffffff;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* Align text to the left */
-  justify-content: flex-start; /* Align text to the top */
-  font-size: calc(2px + 2vmin);
-  color: rgb(0, 0, 0);
-  
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-
-
- /* TextArea is the className for our textarea that takes the input of the user's notes */ 
-.TextArea {
-  resize: none;
-  border: none;
-  outline: none;
-  overflow: hidden;
-  min-height: 100px;
-  width: 100%;
-  font-size: 16px;
-}
-
 .Sidebar {
-  height: 100vh;
-  width: 400px;
-  background-color: #ffffff;
+  height: 70vh;
+  width: 380px;
+  background-color: #fcfcfc;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center items horizontally */
-  justify-content: flex-start;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  gap: 26px;
+  align-items: flex-start;
+  padding: 5px 5px; /* change these values to mess with size of the side bar*/
+  gap: 15px;
+  overflow-y: auto; /* Enable scrolling */
+  scrollbar-width: thin; 
+  scrollbar-color:  #000000 #f0f0f0;
+  /* move scroll bar to the left */
+  direction: rtl;
+}
+/* move scroll bar to the left and reset content inside sidebar*/
+.Sidebar * {
+  direction: ltr; 
+}
+
+/* edit side bar */
+.SidebarContainer {
+  width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px; /* Space between create note button and sidebar */
+  margin-left: 1px;
+  padding: 5px;
 }
 
 .CreateNote {
-  align-items: center;
-  margin-top: 10px;
-  padding: 10px;
-  height: 100px;
+  padding: 10px 20px;
   width: 90%;
-  border: 0px;
-  border-radius: 10px;
-  font-size: 30px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
   font-weight: bold;
   color: white;
-  background-color:rgb(121, 217, 255);
+  background-color: rgb(121, 217, 255);
   box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  cursor: pointer;
+  display: block;
+  text-align: center;
+  margin: 0 auto;
 }
 
 .CreateNote:hover {
-  background-color:rgb(94, 209, 255);
+  background-color: rgba(31, 180, 244, 0.938);
 }
 
+/* Edit note card */
 .NewNote {
-  text-align: left;
   background-color: #ffffff;
-  height: 150px;
-  border-radius: 10px;
+  border-radius: 5px;
   width: 90%;
+  padding: 15px;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
+/* Change color upon hovering on notes */
 .NewNote:hover {
   background-color: #e6e6e6;
 }
 
-.NoteTopic {
-  padding: 10px;
-  font-size: 20px;
+/* Edit note title */
+.NoteTitle {
+  width: 90%;
+  height: 15px;
+  font-size: 15px;
   font-weight: bold;
+  border: none;
+  outline: none;
+  padding: 0px;
+  /* cursor: pointer; */
+}
+
+/* Edit note title */
+.NoteHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* Edit note title */
+.EditIcon {
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 0px;
+  margin-bottom: 20px;
+}
+
+/* Edit note title */
+.EditIcon:hover {
+  color: rgb(121, 217, 255); /* Change color on hover */
+}
+
+.NoteContent {
+  width: 96%;
+  min-height: 100px;
+  border: none;
+  outline: none;
+  padding: 10px;
+  font-size: 14px;
+  resize: none;
+}
+
+.DeleteNoteButton{
+  padding: 8px 15px;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  color: white;
+  background-color: rgb(255, 0, 0);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  cursor: pointer;
+  display: block;
+  margin-left: auto;
+}
+
+.DeleteNoteButton.disabled {
+  background-color: rgb(59, 59, 59);
+  cursor: not-allowed;
+}
+
+.DeleteNoteButton:hover:not(.disabled){
+  background-color: rgba(192, 10, 10, 0.938);
+}
+
+/* display tootip when hovering over Delete button */
+.DeleteButtonContainer {
+  width: 50%;
+  position: relative; 
+  display: 100%; 
+  
+}
+
+/* display tootip when hovering over Delete button */
+.Tooltip {
+  font-size: 10px;
+  visibility: hidden; 
+  width: 140px; 
+  background-color: #4d4c4c; 
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 4px;
+  position: absolute;
+  bottom: 110%; 
+  left: 50%;
+  transform: translateX(-50%); 
+  opacity: 0;
+  transition-delay: .4s;
+}
+
+/* display tootip when hovering over Delete button */
+.DeleteButtonContainer:hover .Tooltip {
+  visibility: visible;
+  opacity: .9;
+}
+
+.FontsButton{
+  padding: 8px 15px;
+  width: 50%;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  color: white;
+  background-color: rgb(121, 217, 255);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  cursor: pointer;
+  display: block;
+  margin-left: auto;
+}
+
+.FontSizeButton{
+  padding: 8px 15px;
+  width: 50%;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  color: white;
+  background-color: rgb(121, 217, 255);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  cursor: pointer;
+  display: block;
+  margin-left: auto;
+}
+
+.DownloadButton{
+  padding: 8px 15px;
+  width: 50%;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  color: white;
+  background-color: rgb(121, 217, 255);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  cursor: pointer;
+  display: block;
+  margin-left: auto;
+}
+
+.HoverEffect:hover{
+  background-color: rgba(31, 180, 244, 0.938);
+}
+
+
+.TopButtonsContainer{
+  width: 380px;
+  padding: 2px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px; /* Space between button and sidebar */
+}
+
+.BottomButtonsContainer{
+  width: 380px;
+  padding: 2px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px; /* Space between button and sidebar */
+}
+
+
+/* Create button modal box */
+.modal-overlay{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:rgba(75, 75, 75, 0.6); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal{
+  background: #e6e6e6;
+  padding: 100px;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.1);
+  width: 400px;
+  /* text-align: center; */
+}
+
+.modal input{
+  width: 100%;
+  font-size: 14px;
+  padding: 10px;
+  border: 1px gray;
+  border-radius: 5px;
+}
+
+.modal-buttons{
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.modal-buttons button{
+  padding: 10px 15px;
+  width: 90px;
+  border: black;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.modal-buttons button:first-child{
+  background-color: rgb(2, 180, 61);
+  color: white;
+}
+.modal-buttons button:first-child:hover{
+  background-color: #228d0ff3;
+}
+
+.modal-buttons button:nth-child(2){
+  background-color: #af1424;
+  color: white;
+}
+
+.modal-buttons button:nth-child(2):hover{
+  background-color: #890714;
+}
+
+.modal-buttons button:nth-child(3){
+  background-color: rgb(2, 180, 61);
+  color: white;
+}
+
+.modal-buttons button:nth-child(3):hover{
+  background-color: #228d0ff3;
+}
+
+.modal-buttons button:last-child{
+  background-color: rgb(2, 180, 61);
+  color: white;
+}
+
+.modal-buttons button:last-child:hover{
+  background-color: #228d0ff3;
+}
+
+/* Selected Note Style */
+.NewNote.active {
+  background-color: rgba(75, 75, 75, 0.6); 
+  border: 2px;
 }
