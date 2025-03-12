@@ -1,18 +1,22 @@
 import './App.css';
 import { useState, useRef, useEffect } from 'react';
 import { useAllNotes } from "./AllNotes";
-import { useSelectedNotes } from "./SelectedNotes";
 
 function App() {
-  const { notes, setNotes, createNewNote, 
-    updateNoteTitle, updateNoteContent} = useAllNotes();
+  const { notes, setNotes, updateNoteTitle, updateNoteContent } = useAllNotes();
 
-    // Tracks selected note
-    const [selectedNote, setSelectedNote] = useState(null);
-    const [tempTitle, setTempTitle] = useState("");
-    // Tracks multiple selected notes
-    const [activeNoteId, setActiveNoteId] = useState([]);
-    
+  // Tracks selected note
+  const [selectedNote, setSelectedNote] = useState(null);
+  const [tempTitle, setTempTitle] = useState("");
+  const [noteContent, setNoteContent] = useState(""); // Tracks the content of the opened note
+  
+  // Tracks multiple selected notes
+  const [activeNoteId, setActiveNoteId] = useState([]);
+  
+  // Tracks font settings
+  const [fontStyle, setFontStyle] = useState("Arial");
+  const [fontSize, setFontSize] = useState(16);
+
   // Handles single selection
   const handleSelectNote = (id) => {
     setActiveNoteId(id);
@@ -20,24 +24,25 @@ function App() {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if(!event.target.closest ('.NewNote') && !event.target.closest('.DeleteButtonContainer') &&
-        !event.target.closest('.modal-overlay'))
-        {setActiveNoteId([]);}};
-        document.addEventListener('click' , handleClickOutside);
-        return () => document.removeEventListener('click', handleClickOutside);
-      },[]);
+      if (!event.target.closest('.NewNote') && 
+          !event.target.closest('.DeleteButtonContainer') &&
+          !event.target.closest('.modal-overlay')) {
+        setActiveNoteId([]);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
 
   // Handles long press
   const handleLongPress = (id) => {
     setActiveNoteId((prev) => {
       if (prev.includes(id)) {
-      // If the note is already selected, remove it
         return prev.filter((noteId) => noteId !== id);
       } else {
-      // If the note is not selected, add it
-    return [...prev, id];
+        return [...prev, id];
       }
-   });
+    });
   };
 
   const pressTimer = useRef(null);
@@ -56,23 +61,19 @@ function App() {
     }
   };
 
-    // Open the title modal
-    const openTitleModal = (note) => {
+  // Open the title modal
+  const openTitleModal = (note) => {
     setSelectedNote(note);
     setTempTitle(note.title);
   };
 
-    // Close the modal
+  // Close the modal
   const closeTitleModal = () => {
-  setSelectedNote(null);
+    setSelectedNote(null);
   };
 
-  const OpenNoteModal = () => {
-    setSelectedNote(null);
-    };
-
   // Save the title
-  const saveTitle = (updateNoteTitle) => {
+  const saveTitle = () => {
     if (selectedNote) {
       updateNoteTitle(selectedNote.id, tempTitle);
     }
@@ -85,118 +86,108 @@ function App() {
   // Delete all selected notes
   const deleteActiveNote = () => {
     if (activeNoteId.length > 0) {
-      setNotes(notes.filter((note) => !activeNoteId.includes(note.id))); // Delete all selected notes
-      setActiveNoteId([]); // Clear the selection
+      setNotes(notes.filter((note) => !activeNoteId.includes(note.id)));
+      setActiveNoteId([]);
     }
   };
 
+  // Create new note and open the modal automatically
+  const createNewNote = () => {
+    const newNote = {
+      id: Date.now(),
+      title: "Untitled",
+      content: ""
+    };
+    setNotes([...notes, newNote]);
+    openTitleModal(newNote);
+  };
+
+  // Open note content in textarea
+  const openNote = (note) => {
+    setSelectedNote(note);
+    setNoteContent(note.content);
+  };
+
+  // Update note content when typing
+  const handleNoteContentChange = (e) => {
+    setNoteContent(e.target.value);
+    if (selectedNote) {
+      updateNoteContent(selectedNote.id, e.target.value);
+    }
+  };
 
   return (
     <div className="App">
-
       <div className='SidebarContainer'>
         {/* Sidebar with "Create New Note" button */}
-        <button className="CreateNote" onClick={createNewNote}>
-        Create New Note</button>
+        <button className="CreateNote" onClick={createNewNote}>Create New Note</button>
 
-      {/* Sidebar*/}
+        {/* Sidebar */}
         <div className="Sidebar">
-
-        {/* Display the new note */}
-        {notes.map((note) => (
-      <div
-      key={note.id}
-      // Checks if note is selected
-      className={`NewNote ${activeNoteId.includes(note.id) ? 'active' : ''}`}
-      onMouseDown={() => startPressTimer(note.id)}
-      onMouseUp={cancelPressTimer}
-      onMouseLeave={cancelPressTimer}
-      >
-    {/* Display Title */}
-    {/* Use this line of code if you just want to click on the note title rather than the icon */}
-    {/* <p className="NoteTitle" onClick={() => openTitleModal(note)}>{note.title}</p> */}
-    {/* and remove the below */}
-    <div className="NoteHeader">
-      <p className="NoteTitle">{note.title}</p>
-        <span className="EditIcon" onClick={() => openTitleModal(note)}>
-          ✏️  
-        </span>
-    </div>
-
-    {/* Edit content of the note */}
-    <textarea
-      className="NoteContent"
-      value={note.content}
-      onChange={(e) => updateNoteContent(note.id, e.target.value)}
-      placeholder="Write your note here..."
-    ></textarea>
-  </div>
-))}
+          {notes.map((note) => (
+            <div
+              key={note.id}
+              className={`NewNote ${activeNoteId.includes(note.id) ? 'active' : ''}`}
+              onMouseDown={() => startPressTimer(note.id)}
+              onMouseUp={cancelPressTimer}
+              onMouseLeave={cancelPressTimer}
+            >
+              <div className="NoteHeader">
+                <p className="NoteTitle">{note.title}</p>
+                <span className="EditIcon" onClick={() => openTitleModal(note)}>✏️</span>
+              </div>
+              
+              <textarea
+                className="NoteContent"
+                value={note.content}
+                onChange={(e) => updateNoteContent(note.id, e.target.value)}
+                placeholder="Write your note here..."
+                style={{ fontFamily: fontStyle, fontSize: fontSize + 'px' }}
+              ></textarea>
+            </div>
+          ))}
         </div>
 
-      {/* Name each note using modal box*/}
-      {selectedNote && (
-        <div className="modal-overlay">
-        <div className="modal">
-          <h2>Edit Note Title</h2>
-          <input 
-            type="text" 
-            value={tempTitle === 'Untitled' ? "" : tempTitle}
-            placeholder="Please Enter Your Note's Title"
-            onChange={(e) => setTempTitle(e.target.value)}
-          />
-          <div className="modal-buttons">
-            {/* Save */}
-            <button onClick={() => {saveTitle(updateNoteTitle);
-              closeTitleModal()}}
-              >Save</button>
-              {/* Delete */}
-            <button onClick={() => {deleteNote(selectedNote.id);
-            closeTitleModal()}} 
-            >Delete</button>
-            {/* Open */}
-            <button onClick={OpenNoteModal}>Open</button>
-            {/* Cancel */}
-            <button onClick={closeTitleModal}>Cancel</button>
+        {/* Name each note using modal box */}
+        {selectedNote && (
+          <div className="modal-overlay">
+            <div className="modal">
+              <h2>Edit Note Title</h2>
+              <input 
+                type="text" 
+                value={tempTitle === 'Untitled' ? "" : tempTitle}
+                placeholder="Please Enter Your Note's Title"
+                onChange={(e) => setTempTitle(e.target.value)}
+              />
+              <div className="modal-buttons">
+                <button onClick={() => { saveTitle(); closeTitleModal(); }}>Save</button>
+                <button onClick={() => { deleteNote(selectedNote.id); closeTitleModal(); }}>Delete</button>
+                <button onClick={() => openNote(selectedNote)}>Open</button>
+                <button onClick={closeTitleModal}>Cancel</button>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      )}
+        )}
 
-        {/*button container */}
         <div className='TopButtonsContainer'>
-
-        <div className="DeleteButtonContainer">
-
-          {/* Delete button */}
-        <button
-        className={`DeleteNoteButton ${activeNoteId.length === 0 ? 'disabled' : ''}`}
-        onClick={deleteActiveNote}
-        disabled={activeNoteId.length === 0} // Disable if no notes are selected
-        >Delete</button>
-
-{activeNoteId.length === 0 && (
-    <div className="Tooltip">Long press on a note item to select</div>
-  )}
-</div>
-          
-          {/* fonts button*/}
-          <button className="FontsButton HoverEffect">
-          Fonts </button>
+          <button className="FontsButton HoverEffect" onClick={() => setFontStyle(fontStyle === 'Arial' ? 'Courier New' : 'Arial')}>Fonts</button>
         </div>
 
-        {/*button container */}
         <div className='BottomButtonsContainer'>
-          {/* Download button */}
-          <button className="DownloadButton HoverEffect">
-          Download </button>
-          {/* font's size button*/}
-          <button className="FontSizeButton HoverEffect">
-          Font Size </button>
-          </div>
+          <button className="FontSizeButton HoverEffect" onClick={() => setFontSize(fontSize + 2)}>Font Size +</button>
+          <button className="FontSizeButton HoverEffect" onClick={() => setFontSize(fontSize - 2)}>Font Size -</button>
+        </div>
       </div>
-      
+
+      <textarea 
+        className='NoteContent' 
+        value={noteContent} 
+        onChange={handleNoteContentChange} 
+        placeholder="Edit your note here..."
+        style={{ fontFamily: fontStyle, fontSize: fontSize + 'px' }}
+      />
     </div>
   );
 }
+
 export default App;
