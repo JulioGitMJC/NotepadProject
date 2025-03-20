@@ -137,7 +137,7 @@ function App() {
                 <span className="EditIcon" onClick={() => openTitleModal(note)}>✏️</span>
               </div>
               
-              <textarea
+              <textarea disabled
                 className="NoteContent"
                 value={note.content}
                 onChange={(e) => updateNoteContent(note.id, e.target.value)}
@@ -161,9 +161,10 @@ function App() {
               />
               <div className="modal-buttons">
                 <button onClick={() => { saveTitle(); closeTitleModal(); }}>Save</button>
-                <button onClick={() => { deleteNote(selectedNote.id); closeTitleModal(); }}>Delete</button>
                 <button onClick={() => openNote(selectedNote)}>Open</button>
+                <button className='UpdateButton' onClick={() => { updateNoteContent(selectedNote.id, noteContent); closeTitleModal(); }}>Update</button>
                 <button onClick={closeTitleModal}>Cancel</button>
+                <button onClick={() => { deleteNote(selectedNote.id); closeTitleModal(); }}>Delete</button>
               </div>
             </div>
           </div>

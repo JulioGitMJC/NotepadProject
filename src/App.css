@@ -10,15 +10,15 @@
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  padding: 5px 5px; /* change these values to mess with size of the side bar*/
+  align-items: center; /* Change from flex-start to center */
+  padding: 5px 5px; /* Adjust sidebar padding */
   gap: 15px;
-  overflow-y: auto; /* Enable scrolling */
-  scrollbar-width: thin; 
-  scrollbar-color:  #000000 #f0f0f0;
-  /* move scroll bar to the left */
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #000000 #f0f0f0;
   direction: rtl;
 }
+
 /* move scroll bar to the left and reset content inside sidebar*/
 .Sidebar * {
   direction: ltr; 
@@ -60,7 +60,7 @@
   background-color: #ffffff;
   border-radius: 5px;
   width: 90%;
-  padding: 15px;
+  padding: 10px;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
   display: flex;
   flex-direction: column;
@@ -129,6 +129,7 @@
   display: block;
   margin-left: auto;
 }
+
 
 .DeleteNoteButton.disabled {
   background-color: rgb(59, 59, 59);
@@ -247,7 +248,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background:rgba(75, 75, 75, 0.6); 
+  background:rgba(75, 75, 75, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -274,6 +275,7 @@
   margin-top: 20px;
   display: flex;
   justify-content: space-around;
+  gap: 10px;
 }
 
 .modal-buttons button{
@@ -294,12 +296,12 @@
 }
 
 .modal-buttons button:nth-child(2){
-  background-color: #af1424;
+  background-color: rgb(2, 180, 61);
   color: white;
 }
 
 .modal-buttons button:nth-child(2):hover{
-  background-color: #890714;
+  background-color: #228d0ff3;
 }
 
 .modal-buttons button:nth-child(3){
@@ -311,13 +313,23 @@
   background-color: #228d0ff3;
 }
 
+.modal-buttons button:nth-child(4){
+  background-color: #af1424;
+  color: white;
+}
+
+.modal-buttons button:nth-child(4):hover{
+  background-color: #890714;
+  color: white;
+}
+
 .modal-buttons button:last-child{
-  background-color: rgb(2, 180, 61);
+  background-color: #af1424;
   color: white;
 }
 
 .modal-buttons button:last-child:hover{
-  background-color: #228d0ff3;
+  background-color: #890714;
 }
 
 /* Selected Note Style */
