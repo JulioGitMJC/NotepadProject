@@ -98,7 +98,7 @@ function App() {
       title: "Untitled",
       content: ""
     };
-    setNotes([...notes, newNote]);
+    setNotes([newNote, ...notes]);
     openTitleModal(newNote);
   };
 
@@ -128,6 +128,7 @@ function App() {
             <div
               key={note.id}
               className={`NewNote ${activeNoteId.includes(note.id) ? 'active' : ''}`}
+              // handle long press
               onMouseDown={() => startPressTimer(note.id)}
               onMouseUp={cancelPressTimer}
               onMouseLeave={cancelPressTimer}
@@ -137,13 +138,21 @@ function App() {
                 <span className="EditIcon" onClick={() => openTitleModal(note)}>✏️</span>
               </div>
               
-              <textarea disabled
-                className="NoteContent"
-                value={note.content}
-                onChange={(e) => updateNoteContent(note.id, e.target.value)}
-                placeholder="Write your note here..."
-                style={{ fontFamily: fontStyle, fontSize: fontSize + 'px' }}
-              ></textarea>
+              <div className = "TxtContainer">
+                <textarea disabled
+                  className="NoteContent"
+                  value={note.content}
+                  onChange={(e) => updateNoteContent(note.id, e.target.value)}
+                  placeholder="Write your note here..."
+                  style={{ fontFamily: fontStyle, fontSize: fontSize + 'px' }}
+                />
+                <div
+                  className="TextareaOverlay"
+                  onMouseDown={(e) => { e.preventDefault(); startPressTimer(note.id); }}
+                  onMouseUp={cancelPressTimer}
+                  onMouseLeave={cancelPressTimer}
+                />
+              </div>
             </div>
           ))}
         </div>
@@ -161,7 +170,7 @@ function App() {
               />
               <div className="modal-buttons">
                 <button onClick={() => { saveTitle(); closeTitleModal(); }}>Save</button>
-                <button onClick={() => openNote(selectedNote)}>Open</button>
+                <button onClick={() => {openNote(selectedNote); closeTitleModal(); }}>Open</button>
                 <button className='UpdateButton' onClick={() => { updateNoteContent(selectedNote.id, noteContent); closeTitleModal(); }}>Update</button>
                 <button onClick={closeTitleModal}>Cancel</button>
                 <button onClick={() => { deleteNote(selectedNote.id); closeTitleModal(); }}>Delete</button>
@@ -171,12 +180,25 @@ function App() {
         )}
 
         <div className='TopButtonsContainer'>
-          <button className="FontsButton HoverEffect" onClick={() => setFontStyle(fontStyle === 'Arial' ? 'Courier New' : 'Arial')}>Fonts</button>
+          {/* <button className="FontsButton HoverEffect" onClick={() => setFontStyle(fontStyle === 'Arial' ? 'Courier New' : 'Arial')}>Download</button> */}
+          {/* Font size buttons */}
+          <button className="FontSizeButton HoverEffect" onClick={() => setFontSize(fontSize + 2)}>Font Size +</button>
+          <button className="FontSizeButton HoverEffect" onClick={() => setFontSize(fontSize - 2)}>Font Size -</button>
         </div>
 
         <div className='BottomButtonsContainer'>
-          <button className="FontSizeButton HoverEffect" onClick={() => setFontSize(fontSize + 2)}>Font Size +</button>
-          <button className="FontSizeButton HoverEffect" onClick={() => setFontSize(fontSize - 2)}>Font Size -</button>
+        {/* Delete button */}
+        <div className="DeleteButtonContainer">
+          <button className={`DeleteNoteButton ${activeNoteId.length === 0 ? 'disabled' : ''}`} 
+            onClick={deleteActiveNote} disabled={activeNoteId.length === 0} // Disable if no notes are selected
+            >Delete
+          </button>
+        {activeNoteId.length === 0 && (
+          <div className="Tooltip">Long press on a note item to select</div>)}
+        </div>
+
+        {/* Download Button */}
+          <button className="DownloadButton HoverEffect" onClick={() => {} }>Download</button>
         </div>
       </div>
 
