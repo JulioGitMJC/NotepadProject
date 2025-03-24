@@ -134,7 +134,8 @@ function App() {
               onMouseLeave={cancelPressTimer}
             >
               <div className="NoteHeader">
-              <span className='UpdateIcon' onClick={() => updateNoteContent(note.id, noteContent)}>⬆️</span>
+                <p className="NoteTitle">{note.title}</p>
+                <span className='UpdateIcon' onClick={() => updateNoteContent(note.id, noteContent)}>⬆️</span>
                 <span className="EditIcon" onClick={() => openTitleModal(note)}>✏️</span>
               </div>
               
