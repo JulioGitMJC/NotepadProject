@@ -134,7 +134,7 @@ function App() {
               onMouseLeave={cancelPressTimer}
             >
               <div className="NoteHeader">
-                <p className="NoteTitle">{note.title}</p>
+              <span className='UpdateIcon' onClick={() => updateNoteContent(note.id, noteContent)}>⬆️</span>
                 <span className="EditIcon" onClick={() => openTitleModal(note)}>✏️</span>
               </div>
               
@@ -171,7 +171,6 @@ function App() {
               <div className="modal-buttons">
                 <button onClick={() => { saveTitle(); closeTitleModal(); }}>Save</button>
                 <button onClick={() => {openNote(selectedNote); closeTitleModal(); }}>Open</button>
-                <button className='UpdateButton' onClick={() => { updateNoteContent(selectedNote.id, noteContent); closeTitleModal(); }}>Update</button>
                 <button onClick={closeTitleModal}>Cancel</button>
                 <button onClick={() => { deleteNote(selectedNote.id); closeTitleModal(); }}>Delete</button>
               </div>
@@ -198,7 +197,22 @@ function App() {
         </div>
 
         {/* Download Button */}
-          <button className="DownloadButton HoverEffect" onClick={() => {} }>Download</button>
+        <button
+          className="DownloadButton HoverEffect"
+          onClick={() => {
+          const element = document.createElement("a");
+          const file = new Blob([noteContent], { type: "text/plain" });
+          const fileName =
+            (selectedNote?.title || "note").replace(/[<>:"/\\|?*\x00-\x1F]/g, "_") + ".txt";
+          element.href = URL.createObjectURL(file);
+          element.download = fileName;
+          document.body.appendChild(element);
+          element.click();
+          document.body.removeChild(element);
+          }}
+        >
+          Download
+        </button>
         </div>
       </div>
 

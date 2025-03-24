@@ -100,6 +100,14 @@
   margin-bottom: 20px;
 }
 
+/* Update note */
+.UpdateIcon {
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 300px;
+  margin-bottom: 20px;
+}
+
 /* Edit note title */
 .EditIcon:hover {
   color: rgb(121, 217, 255); /* Change color on hover */
@@ -336,12 +344,13 @@
 }
 
 .modal-buttons button:nth-child(3){
-  background-color: rgb(2, 180, 61);
+  background-color: #af1424;
   color: white;
 }
 
 .modal-buttons button:nth-child(3):hover{
-  background-color: #228d0ff3;
+  background-color: #890714;
+  color: white;
 }
 
 .modal-buttons button:nth-child(4){
