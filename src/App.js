@@ -18,10 +18,15 @@ function App() {
   const [fontStyle, setFontStyle] = useState("Arial");
   const [fontSize, setFontSize] = useState(16);
 
-  //added
   // CreateNewNote button modal-box
   const [showNewNoteModal, setShowNewNoteModal] = useState(false);
   const [newNoteTitle, setNewNoteTitle] = useState("");
+
+  // Dark Mode
+  const [darkMode, setDarkMode] = useState(false);
+  const toggleTheme = () => {
+    setDarkMode(!darkMode);
+  };
 
   // Handles single selection
   const handleSelectNote = (id) => {
@@ -138,10 +143,11 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className={`App ${darkMode ? 'dark-mode' : ''}`}>
+
       <div className='SidebarContainer'>
         {/* Sidebar with "Create New Note" button */}
-        <button className="CreateNote" onClick={openNewNoteModal}>Create New Note</button>
+        <button className="CreateNote HoverEffect" onClick={openNewNoteModal}>Create New Note</button>
 
         {/* Sidebar */}
         <div className="Sidebar">
@@ -221,16 +227,30 @@ function App() {
         )}
 
         <div className='TopButtonsContainer'>
-          {/* <button className="FontsButton HoverEffect" onClick={() => setFontStyle(fontStyle === 'Arial' ? 'Courier New' : 'Arial')}>Download</button> */}
+          <button className="ThemeButton HoverEffect" onClick={toggleTheme}> {darkMode ? 'Light Mode' : 'Dark Mode'}</button>
+          <button className="SignOut HoverEffect" >Sign Out</button>
+
           {/* Font size buttons */}
-          <button className="FontSizeButton HoverEffect" onClick={() => setFontSize(fontSize + 2)}>Font Size +</button>
-          <button className="FontSizeButton HoverEffect" onClick={() => setFontSize(fontSize - 2)}>Font Size -</button>
+          {/* <button className="FontSizeButton HoverEffect" onClick={() => setFontSize(fontSize + 2)}>Font Size +</button>
+          <button className="FontSizeButton HoverEffect" onClick={() => setFontSize(fontSize - 2)}>Font Size -</button> */}
+        </div>
+
+        <div className="FontSizeContainer">
+          <button
+            className="FontSizeButton HoverEffect" onClick={() => setFontSize(fontSize + 2)}>
+            ➕
+          </button>
+
+          <button
+            className="FontSizeButton HoverEffect" onClick={() => setFontSize(fontSize - 2)}>
+            ➖
+          </button>
         </div>
 
         <div className='BottomButtonsContainer'>
           {/* Delete button */}
           <div className="DeleteButtonContainer">
-            <button className={`DeleteNoteButton ${activeNoteId.length === 0 ? 'disabled' : ''}`}
+            <button className={`DeleteNoteButton  ${activeNoteId.length === 0 ? 'disabled' : ''}`}
               onClick={deleteActiveNote} disabled={activeNoteId.length === 0} // Disable if no notes are selected
             >Delete
             </button>
@@ -258,6 +278,7 @@ function App() {
         </div>
       </div>
 
+
       <textarea
         className='NoteContent'
         value={noteContent}
@@ -266,6 +287,7 @@ function App() {
         style={{ fontFamily: fontStyle, fontSize: fontSize + 'px' }}
       />
     </div>
+
   );
 }
 

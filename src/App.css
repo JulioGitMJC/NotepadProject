@@ -1,6 +1,7 @@
 .App {
   text-align: center;
   display: flex;
+  min-height: 100vh;
 }
 
 .Sidebar {
@@ -44,16 +45,16 @@
   font-weight: bold;
   color: white;
   background-color: rgb(121, 217, 255);
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  box-shadow: rgba(0, 0, 0, 0.16);
   cursor: pointer;
   display: block;
   text-align: center;
   margin: 0 auto;
 }
 
-.CreateNote:hover {
+/* .CreateNote:hover {
   background-color: rgba(31, 180, 244, 0.938);
-}
+} */
 
 /* Edit note card */
 .NewNote {
@@ -154,19 +155,6 @@
   cursor: pointer;
   display: block;
   margin-left: auto;
-
-  /* padding: 8px 15px;
-  width: 50%;
-  border: none;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: bold;
-  color: white;
-  background-color: rgb(121, 217, 255);
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
-  cursor: pointer;
-  display: block;
-  margin-left: auto; */
 }
 
 
@@ -211,34 +199,36 @@
   opacity: .9;
 }
 
- .FontsButton{ 
-  padding: 8px 15px;
-  width: 50%;
-  border: none;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: bold;
-  color: white;
-  background-color: rgb(121, 217, 255);
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
-  cursor: pointer;
-  display: block;
-  margin-left: auto;
+.FontSizeContainer {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  padding: 0px;
+  z-index: 100;
 }
 
 .FontSizeButton{
-  padding: 8px 15px;
-  width: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
   border: none;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: bold;
-  color: white;
-  background-color: rgb(121, 217, 255);
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  display: block;
-  margin-left: auto;
+  opacity: 0.7;
+  box-shadow: rgb(0, 0, 0);
+  transition: transform 0.2s ease-out;
+  /* background-color: blue; */
+}
+
+.FontSizeButton:hover {
+  transform: translateY(-3px); 
+  animation: none;
 }
 
 .DownloadButton{
@@ -250,10 +240,41 @@
   font-weight: bold;
   color: white;
   background-color: rgb(121, 217, 255);
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
-  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.16);
   display: block;
   margin-left: auto;
+  cursor: pointer;
+}
+
+/* Theme Button */
+.ThemeButton {
+  padding: 8px 15px;
+  width: 50%;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  color: white;
+  background-color: rgb(121, 217, 255);
+  box-shadow: rgba(0, 0, 0, 0.16);
+  display: block;
+  margin-left: auto;
+  cursor: pointer;
+}
+
+.SignOut{
+  padding: 8px 15px;
+  width: 50%;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  color: white;
+  background-color: rgb(121, 217, 255);
+  box-shadow: rgba(0, 0, 0, 0.16);
+  display: block;
+  margin-left: auto;
+  cursor: pointer;
 }
 
 .HoverEffect:hover{
@@ -331,7 +352,7 @@
   color: white;
 }
 .modal-buttons button:first-child:hover{
-  background-color: #228d0ff3;
+  background-color: #20800ff3;
 }
 
 .modal-buttons button:nth-child(2){
@@ -340,36 +361,27 @@
 }
 
 .modal-buttons button:nth-child(2):hover{
-  background-color: #228d0ff3;
+  background-color: #20800ff3;
 }
 
 .modal-buttons button:nth-child(3){
-  background-color: #af1424;
+  background-color: rgb(197, 0, 0);
   color: white;
 }
 
 .modal-buttons button:nth-child(3):hover{
-  background-color: #890714;
-  color: white;
-}
-
-.modal-buttons button:nth-child(4){
-  background-color: #af1424;
-  color: white;
-}
-
-.modal-buttons button:nth-child(4):hover{
-  background-color: #890714;
+  background-color: #a50a19;
   color: white;
 }
 
 .modal-buttons button:last-child{
-  background-color: #af1424;
+  background-color: rgb(197, 0, 0);
   color: white;
 }
 
 .modal-buttons button:last-child:hover{
-  background-color: #890714;
+  background-color: #a50a19;
+  color: white;
 }
 
 /* Selected Note Style */
@@ -387,4 +399,121 @@
 
 .NewContainer{
   width: 100%;
+}
+
+/* Dark Mode Styles */
+.App.dark-mode {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.App.dark-mode .Sidebar{
+  background-color: #1e1e1e;
+  scrollbar-color: #000000 #3c3c3c;
+}
+
+.App.dark-mode .SidebarContainer {
+  background-color: #1a1a1a;
+}
+
+.App.dark-mode .NewNote {
+  background-color: #2d2d2d;
+  color: #ffffff;
+}
+
+.App.dark-mode .NewNote:hover {
+  background-color: #171717;
+}
+
+.App.dark-mode textarea {
+  background-color: #2d2d2d;
+  color: #ffffff;
+}
+
+.App.dark-mode .NewNote.active {
+  background-color: rgba(0, 0, 0, 0.6); 
+}
+
+/* Night mode buttons */
+.App.dark-mode .CreateNote,
+.App.dark-mode .DownloadButton,
+.App.dark-mode .FontSizeButton,
+.App.dark-mode .ThemeButton, 
+.App.dark-mode .SignOut{
+  background-color: #2d343c;
+}
+
+/* Night mode buttons Hover*/
+.App.dark-mode .HoverEffect:hover{
+  background-color: rgba(0, 0, 0, 0.938);
+}
+
+.App.dark-mode .DeleteNoteButton.disabled{
+  background-color: rgb(59, 59, 59);
+  cursor: not-allowed;
+}
+
+.App.dark-mode .DeleteNoteButton:not(.disabled) {
+  background-color: #0d0d0d;
+}
+
+.App.dark-mode .DeleteNoteButton:hover:not(.disabled){
+  background-color: #000000;
+}
+
+/* Dark Mode for the modal boxes  */
+.App.dark-mode .modal-overlay {
+  background: rgba(0, 0, 0, 0.75) !important;
+}
+
+.App.dark-mode .modal {
+  background-color: #2d2d2d;
+  color: #ffffff;
+}
+
+.App.dark-mode .modal h2 {
+  color: #ffffff;
+}
+
+.App.dark-mode .modal input {
+  background-color: #3d3d3d;
+  color: #ffffff;
+  border: 1px solid #555;
+}
+
+.App.dark-mode .modal input::placeholder {
+  color: #aaa;
+}
+
+.App.dark-mode .modal-buttons button {
+  color: white;
+}
+
+/* Specific button colors in dark mode */
+.App.dark-mode .modal-buttons button:first-child,
+.App.dark-mode .modal-buttons button:nth-child(2) {
+  background-color: #2d343c;
+}
+
+.App.dark-mode .modal-buttons button:nth-child(3),
+.App.dark-mode .modal-buttons button:nth-child(4) {
+  background-color: #1a1a1a;
+}
+
+.App.dark-mode .modal-buttons button:first-child:hover,
+.App.dark-mode .modal-buttons button:nth-child(2):hover {
+  background-color: #131313;
+}
+
+.App.dark-mode .modal-buttons button:nth-child(3):hover,
+.App.dark-mode .modal-buttons button:nth-child(4):hover {
+  background-color: #000000;
+}
+
+.App.dark-mode .FontSizeButton {
+  background-color: rgb(97, 97, 97);
+}
+
+.App.dark-mode .FontSizeButton:hover{
+  background-color: rgba(68, 67, 67, 0.938);
 }
