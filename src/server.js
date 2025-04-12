@@ -5,12 +5,23 @@ import dotenv from "dotenv";
 import cors from "cors";
 import s3 from "./s3.js";
 import { verifyToken } from "./middleware/auth.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 console.log("S3 Bucket Loaded:", process.env.AWS_S3_BUCKET);
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use(express.static(path.join(__dirname, "client", "build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client", "build", "index.html"));
+});
 
 /* SIGNUP */
 app.post("/api/signup", async (req, res) => {
