@@ -5,9 +5,9 @@ dotenv.config();
 
 // Configure AWS S3
 const s3 = new AWS.S3({
-  accessKeyId: process.env.AKIA5FCD6AAA6JJPBZYM,
-  secretAccessKey: process.env.PvKsr5W7tml+TBYcFuVWTtOyWW3MEJlWZBmITBkE,
-  region: process.env.us-east-1
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION
 });
 
 export default s3;

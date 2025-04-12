@@ -1,132 +1,203 @@
-import express from "express" // used to formast thje middle easire
-import bcrypt from "bcryptjs" // to hash the password
-import jwt from "jsonwebtoken" // to create and verify tokens
-import dotenv from "dotenv" // to use .env file
-import cors from "cors" // to allow cross origin requests
-import s3 from "./s3.js"; // used for uploading images to s3 and downloading them
-import { verifyToken } from "./middleware/auth.js"; // importing middleware to verify token
+import express from "express";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import cors from "cors";
+import s3 from "./s3.js";
+import { verifyToken } from "./middleware/auth.js";
 
-dotenv.config() // to use .env file
-const app = express() // creating express app
-app.use(cors()) // using cors to allow cross origin requests
-app.use(express.json()) // to parse json data
+dotenv.config();
+console.log("S3 Bucket Loaded:", process.env.AWS_S3_BUCKET);
+const app = express();
+app.use(cors());
+app.use(express.json());
 
-
-// sign up wouuted that stored in user s3 withc will be deifned with a GET or Post fucntiong that i will add later
+/* SIGNUP */
 app.post("/api/signup", async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+    console.log("Signup request:", req.body);
+
+    if (!username || !email || !password) {
+      console.warn("Signup failed: Missing fields");
+      return res.status(400).json({ error: "all fields are needed to pass" });
+    }
+
+    const params = {
+      Bucket: process.env.AWS_S3_BUCKET,
+      Key: `users/${email}.json`
+    };
+
     try {
-        const { username, email, password} =req.body; // for  geting the username
-        if (!username || !email || !password) {
-            return res.status(400).json({ error: "all feilds are needed to pass"}) // better enter in both passowrd and email
-        } 
-        // to check if the suer already exists
-        const parmas = { Bucket: process.env.AW_S3_BUCKET, key: `users/${email}.json` };
-    try {
-        await s3.headObject(parmas).promise();
-        return res.status(400).json({ error: "email already exists" });
-    } catch (error) {} // if no file is found contion on to make a new user
-        
-    
-    // if user does not exist then create a new user
-        const hashedPassword = await bcrypt.hash(password, 10); //to hash the users passoerd wiith bycrpty
-        const user = { username, email, password: hashedPassword }; // to create user data on JSON
-        const params = { Bucket: process.env.AW_S3_BUCKET, Key: `users/${email}.json`, Body: JSON.stringify(user) }; // till next indent,, uploading usre data to s3
-        await s3.upload(params).promise();
-        return res.status(201).json({ message: "User created successfully" });
-} catch (error) {
-    res.status(500).json({ error: "error creating they user" });
-}
+      await s3.headObject(params).promise();
+      console.warn("Signup failed: Email already exists");
+      return res.status(400).json({ error: "email already exists" });
+    } catch (err) {
+      console.log("Email does not exist, proceeding to create user.");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = { username, email, password: hashedPassword };
+    const uploadParams = {
+      Bucket: process.env.AWS_S3_BUCKET,
+      Key: `users/${email}.json`,
+      Body: JSON.stringify(user)
+    };
+
+    if (!uploadParams.Bucket) {
+      console.error("Upload failed: AWS_S3_BUCKET is undefined");
+      return res.status(500).json({ error: "Server misconfiguration" });
+    }
+
+    console.log("Uploading user to bucket:", uploadParams.Bucket);
+    await s3.upload(uploadParams).promise();
+    console.log("User created and uploaded to S3:", email);
+    return res.status(201).json({ message: "User created successfully" });
+  } catch (error) {
+    console.error("Signup Error:", error);
+    res.status(500).json({ error: "error creating the user" });
+  }
 });
 
-// loginh route( retrieves user form S3
+/* LOGIN */
 app.post("/api/login", async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        // get user data form thee s3
-        const userData = await s3.getObject({
-            Bucket: process.env.AW_S3_BUCKET,
-            Key: `users/${email}.json`
-        }).promise();
+  try {
+    console.log("Login request received");
+    const { email, password } = req.body;
+    console.log("Login attempt for:", email);
 
-        const user = JSON.parse(userData.body.toStrinng());
-
-        //compare password to the user account email/or possibly the usernname if we decied on later date
-        const isMatch = await bcrypt.compare(password,user,password);
-        if (!Match) return res.status(400).json({ error: " you shall not passs" });
-
-        // make thee token of power to allow the user to pass and not get logout after log in(unless they prtess logout)
-
-        const token = jwt.sign({ emial: user.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
-
-       res.json({ token, username: user,uuserame });
-    } catch (error) {
-        res,status(500).json({ error: "wrong password loser, or email"});
+    if (!email || !password) {
+      console.warn("Login failed: Missing email or password");
+      return res.status(400).json({ error: "Email and password required" });
     }
 
-});
+    const s3Key = `users/${email}.json`;
+    console.log("Fetching user from S3:", s3Key);
 
-// geting user info (thorught protected routw)
-app.get("/api/user", verifytoken, async (req, res) => {
+    const userData = await s3.getObject({
+      Bucket: process.env.AWS_S3_BUCKET,
+      Key: s3Key
+    }).promise();
+
+    console.log("User data retrieved from S3");
+
+    let user;
     try {
-        // fetch user data from s3
-        const userData = await self.getObject({
-            Bucket: process.env.AW_S3_BUCKET,
-            Key: `users/${req.user.email}.json`
-        }).prosmise();
-
-        const uuser = JSON.parse(userData.Body.toString());
-        res.json({username: user.name, email: user.email });
-    } catch (error) {
-        res.status(500).json(({ error: "error fetching user data fomr dark web"}))
+      user = JSON.parse(userData.Body.toString());
+    } catch (parseErr) {
+      console.error("Failed to parse user JSON:", parseErr);
+      return res.status(500).json({ error: "User data corrupted" });
     }
 
-});
-  // geting the notes for the user by downloading fomr s3 and sending it to the user
-app.get("/api/notes", verifyToken, async (req, res) => {
-    const token = req.headers.suthorization?.split(" ")[1];
-    if (!token) return ews.status(401).JOSN({ error: "unauthorized" });
+    const isMatch = await bcrypt.compare(password, user.password);
+    console.log("Password match:", isMatch);
 
-    try {  // to verify the token to get notes fomr user email files
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);  
+    if (!isMatch) {
+      console.warn("Login failed: Incorrect password");
+      return res.status(400).json({ error: "you shall not pass" });
+    }
 
-        const notesData  = await s3.getObject({
-            Bucket: process.env.AW_S3_BUCKET,
-            Key: `users/${decoded.email}/notes.json`
-        }).proimise();
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET not set in .env");
+      return res.status(500).json({ error: "JWT secret not configured" });
+    }
 
-        const nortes = JSON.parse(notesData.Body.toString()); // to parse the notes data
-        res.json({ noters });
-
-    } catch (error) {  // to handle the error if the notes are not found
-        if (error.code === "NoSuchKey") {
-            return res.json({ notes: [] }); //no notes yet for this user"
-                }
-                res.status(500).json({ error: "Error fetiching notes" });
-            }
-        });
-      // this is how wer save the users notes for the spefive perosn on s3
-      app.post("/api/notes", async (erq, res) => {
-        const token = req.headers.autghorization.split(" ")[1];
-        if (!token) return res.status(401).json({ error: "unauthorized" });
-
-        try {  // to verify the token
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            const notes = req.body.notes;
-            const notesString = JSON.stringify(notes);
-
-            await s3.upload({  // to upload the notes to s3
-                Bucket: process.env.AW_S3_BUCKET,
-                Key: `usersd/${decoded.email}/notes.json`,
-                Body: notesString,
-                ContentType: "application/json"
-            }).promise();
-
-            res.json({ message: "Notes saved successfully" }); // to send the message to the user
-
-        } catch (error) {
-            res.status(500).json({ error: "Error saving notes"}); // if this happens, then we are royally screwed(most likely s3 bucckle not set up right :)
-        }
+    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
+      expiresIn: "1h"
     });
 
-//hit the sever drive chewie
+    console.log("JWT token issued for:", email);
+    res.json({ token, username: user.username });
+  } catch (error) {
+    if (error.code === "NoSuchKey") {
+      console.warn("Login failed: Email not found in S3");
+      return res.status(400).json({ error: "wrong password or email" });
+    }
+    console.error("Login Error:", error);
+    res.status(500).json({ error: "wrong password or email" });
+  }
+});
+
+/* GET USER INFO */
+app.get("/api/user", verifyToken, async (req, res) => {
+  try {
+    const userKey = `users/${req.user.email}.json`;
+    console.log("Fetching user info for:", userKey);
+
+    const userData = await s3.getObject({
+      Bucket: process.env.AWS_S3_BUCKET,
+      Key: userKey
+    }).promise();
+
+    const user = JSON.parse(userData.Body.toString());
+    console.log("User info retrieved:", user.email);
+    res.json({ username: user.username, email: user.email });
+  } catch (error) {
+    console.error("Error fetching user info:", error);
+    res.status(500).json({ error: "error fetching user data from dark web" });
+  }
+});
+
+/* GET NOTES */
+app.get("/api/notes", verifyToken, async (req, res) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    console.warn("Unauthorized notes access attempt");
+    return res.status(401).json({ error: "unauthorized" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const key = `users/${decoded.email}/notes.json`;
+
+    console.log("Fetching notes for:", decoded.email);
+    const notesData = await s3.getObject({
+      Bucket: process.env.AWS_S3_BUCKET,
+      Key: key
+    }).promise();
+
+    const notes = JSON.parse(notesData.Body.toString());
+    console.log("Notes retrieved");
+    res.json({ notes });
+  } catch (error) {
+    if (error.code === "NoSuchKey") {
+      console.log("No notes found for user, returning empty array");
+      return res.json({ notes: [] });
+    }
+
+    console.error("Error fetching notes:", error);
+    res.status(500).json({ error: "Error fetching notes" });
+  }
+});
+
+/* SAVE NOTES */
+app.post("/api/notes", verifyToken, async (req, res) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    console.warn("Unauthorized note save attempt");
+    return res.status(401).json({ error: "unauthorized" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const notes = req.body.notes;
+    const notesString = JSON.stringify(notes);
+
+    console.log("Saving notes for:", decoded.email);
+    await s3.upload({
+      Bucket: process.env.AWS_S3_BUCKET,
+      Key: `users/${decoded.email}/notes.json`,
+      Body: notesString,
+      ContentType: "application/json"
+    }).promise();
+
+    console.log("Notes saved successfully for:", decoded.email);
+    res.json({ message: "Notes saved successfully" });
+  } catch (error) {
+    console.error("Error saving notes:", error);
+    res.status(500).json({ error: "Error saving notes" });
+  }
+});
+
+/* START SERVER */
 app.listen(80, () => console.log("Server running on port 80"));

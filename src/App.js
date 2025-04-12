@@ -3,8 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useAllNotes } from "./AllNotes";
 
 function App() {
-  const { notes, setNotes, updateNoteTitle, updateNoteContent } = useAllNotes();
-
+  const { notes, setNotes } = useAllNotes();
   // Tracks selected note
   const [selectedNote, setSelectedNote] = useState(null);
   const [tempTitle, setTempTitle] = useState("");
@@ -22,6 +21,113 @@ function App() {
   // CreateNewNote button modal-box
   const [showNewNoteModal, setShowNewNoteModal] = useState(false);
   const [newNoteTitle, setNewNoteTitle] = useState("");
+
+  // This will handle the modal login state
+  const[LoginModel, setLoginModal] = useState(true);
+
+  // States for Email and Password
+  const [loginEmail, setLoginEmail] = useState("")
+  const [loginPassword, setLoginPassword] = useState("")
+
+  // Handler for api requests
+
+  const handleLogin = async () => {
+    try {
+      const res = await fetch("http://localhost:80/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email: loginEmail, password: loginPassword })
+      });
+  
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem("token", data.token);
+        setLoginModal(false);
+        console.log("Successfully logged in " + data.username);
+        const notesRes = await fetch("http://localhost:80/api/notes", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${data.token}`
+          }
+        });
+        
+        const notesData = await notesRes.json();
+        setNotes(notesData.notes); // assuming the backend returns { notes: [...] }
+      } else {
+        alert(data.error || "Login has failed");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Something went wrong.");
+    }
+  };
+  
+  const handleRegister = async () => {
+    try {
+      const res = await fetch("http://localhost:80/api/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ username: loginEmail.split("@")[0], email: loginEmail, password: loginPassword })
+      });
+  
+      const data = await res.json();
+      if (res.ok) {
+        alert("Account created successfully! Now you can log in.");
+      } else {
+        alert(data.error || "Registration failed");
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      alert("Something went wrong during registration.");
+    }
+  };
+
+  const updateNoteContent = async (id, content) => {
+    setNotes(prev =>
+      prev.map(note => note.id === id ? { ...note, content } : note)
+    );
+  
+    const token = localStorage.getItem("token");
+    const updatedNotes = notes.map(note =>
+      note.id === id ? { ...note, content } : note
+    );
+  
+    await fetch("http://localhost:80/api/notes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ notes: updatedNotes })
+    });
+  };
+  
+  const updateNoteTitle = async (id, title) => {
+    setNotes(prev =>
+      prev.map(note => note.id === id ? { ...note, title } : note)
+    );
+  
+    const token = localStorage.getItem("token");
+    const updatedNotes = notes.map(note =>
+      note.id === id ? { ...note, title } : note
+    );
+  
+    await fetch("http://localhost:80/api/notes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ notes: updatedNotes })
+    });
+  };
+  
+  
+
 
   // Handles single selection
   const handleSelectNote = (id) => {
@@ -85,23 +191,54 @@ function App() {
     }
   };
 
-  const deleteNote = (id) => {
-    setNotes(notes.filter(note => note.id !== id));
+  const deleteNote = async (id) => {
+    const updated = notes.filter(note => note.id !== id);
+    setNotes(updated);
+  
+    const token = localStorage.getItem("token");
+    await fetch("http://localhost:80/api/notes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ notes: updated })
+    });
   };
+  
 
   // Delete all selected notes
-  const deleteActiveNote = () => {
+  const deleteActiveNote = async () => {
     if (activeNoteId.length > 0) {
-      setNotes(notes.filter((note) => !activeNoteId.includes(note.id)));
-      setActiveNoteId([]);
+      const updated = notes.filter(note => !activeNoteId.includes(note.id));
+      setNotes(updated);        // 1. Update frontend
+      setActiveNoteId([]);      // 2. Clear selection
+  
+      // 3. Save updated notes to backend
+      const token = localStorage.getItem("token");
+      if (token) {
+        await fetch("http://localhost:80/api/notes", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ notes: updated })
+        });
+      }
     }
   };
+  
 
   // Open new note modal
   const openNewNoteModal = () => {
     setShowNewNoteModal(true);
     setNewNoteTitle("");
   };
+
+  const showLoginModal = () => {
+    setLoginModal(true);
+  }
 
   // Create new note after user clicks save
   const confirmCreateNewNote = () => {
@@ -133,9 +270,13 @@ function App() {
   const handleNoteContentChange = (e) => {
     setNoteContent(e.target.value);
     if (selectedNote) {
-      updateNoteContent(selectedNote.id, e.target.value);
+      const updated = notes.map(note =>
+        note.id === selectedNote.id ? { ...note, content: e.target.value } : note
+      );
+      setNotes(updated);
     }
   };
+  
 
   return (
     <div className="App">
@@ -194,6 +335,32 @@ function App() {
               <div className="modal-buttons">
                 <button onClick={confirmCreateNewNote}>Save</button>
                 <button onClick={cancelCreateNewNote}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* This is the Modal for the Login Popup*/}
+        {LoginModel && (
+          <div className="modal-overlay-login">
+            <div className="modal">
+              <h2>Login</h2>
+              <input
+                type="email"
+                value={loginEmail}
+                placeholder="Email"
+                onChange={(e) => setLoginEmail(e.target.value)}
+                autoFocus
+              />
+              <input
+                type="password"
+                value={loginPassword}
+                placeholder="Password"
+                onChange={(e) => setLoginPassword(e.target.value)}
+                autoFocus
+              />
+              <div className="modal-buttons">
+                <button onClick={handleLogin}>Login</button>
+                <button onClick={handleRegister}>Register</button>
               </div>
             </div>
           </div>
