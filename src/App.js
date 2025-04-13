@@ -1,6 +1,7 @@
 import './App.css';
 import { useState, useRef, useEffect } from 'react';
-import { useAllNotes } from "./AllNotes";
+import { useAllNotes } from './AllNotes.js';
+
 
 function App() {
   const { notes, setNotes } = useAllNotes();
@@ -392,7 +393,20 @@ function App() {
 
         <div className='TopButtonsContainer'>
           <button className="ThemeButton HoverEffect" onClick={toggleTheme}> {darkMode ? 'Light Mode' : 'Dark Mode'}</button>
-          <button className="SignOut HoverEffect" >Sign Out</button>
+          <button
+            className="SignOut HoverEffect"
+            onClick={() => {
+            localStorage.removeItem("token");
+            setLoginModal(true);
+            setNotes([]);
+            setSelectedNote(null);
+            setNoteContent("");
+            setActiveNoteId([]);
+          }}
+          >
+          Sign Out
+          </button>
+
 
           {/* Font size buttons */}
           {/* <button className="FontSizeButton HoverEffect" onClick={() => setFontSize(fontSize + 2)}>Font Size +</button>
