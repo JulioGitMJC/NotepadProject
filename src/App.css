@@ -333,7 +333,10 @@
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.1);
   width: 400px;
+  display: flex;
+  flex-direction: column;
   /* text-align: center; */
+  gap: 10px;
 }
 
 .modal input{
@@ -345,7 +348,7 @@
 }
 
 .modal-buttons{
-  margin-top: 20px;
+  margin-top: 15px;
   display: flex;
   justify-content: space-around;
   gap: 10px;

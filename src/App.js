@@ -351,7 +351,7 @@ function App() {
               <input
                 type="email"
                 value={loginEmail}
-                placeholder="Email"
+                placeholder="Username"
                 onChange={(e) => setLoginEmail(e.target.value)}
                 autoFocus
               />
