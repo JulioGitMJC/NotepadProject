@@ -511,35 +511,5 @@ function App() {
 
   );
 }
-// Auto-save notes every 30 seconds
-useEffect(() => {
-  const token = localStorage.getItem("token");
-  if (!token || notes.length === 0) return;
-
-  const saveNotes = async () => {
-    try {
-      const response = await fetch("http://localhost:80/api/notes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ notes })
-      });
-
-      if (!response.ok) {
-        console.error("Auto-save failed.");
-      } else {
-        console.log("✅ Notes auto-saved");
-      }
-    } catch (error) {
-      console.error("Auto-save error:", error);
-    }
-  };
-
-  const intervalId = setInterval(saveNotes, 30000); // Save every 30 seconds
-
-  return () => clearInterval(intervalId); // Clean up on component unmount
-}, [notes]);
 
 export default App;
