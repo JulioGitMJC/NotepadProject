@@ -511,5 +511,28 @@ function App() {
 
   );
 }
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  if (!token || !notes) return;
+
+  const sendToCache = async () => {
+    try {
+      await fetch("/api/notes/cache", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ notes }),
+      });
+    } catch (err) {
+      console.error("Failed to send notes to cache", err);
+    }
+  };
+
+  const interval = setInterval(sendToCache, 5000); // send to cache every 5s
+
+  return () => clearInterval(interval);
+}, [notes]);
 
 export default App;
