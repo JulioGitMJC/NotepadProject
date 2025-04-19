@@ -13,7 +13,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const severCache = {}; // store user notes in mermory cache
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -169,43 +168,6 @@ if (app._router && app._router.stack) {
 } else {
   console.log("Router stack not available.");
 }
-
-
-// auto aavve notes 30sec set to cahce
-app.post("/api/notes/cache", (req, res) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) return res.status(401).json({ error: "Unauthorized" });
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const email = decoded.email;
-    const notes = req.body.notes;
-
-    serverCache[email] = notes; // cache it
-    res.json({ message: "Notes cached successfully" });
-  } catch (error) {
-    res.status(401).json({ error: "Invalid token" });
-  }
-});
-setInterval(async () => {
-  for (const email in serverCache) {
-    const notes = serverCache[email];
-    const notesString = JSON.stringify(notes);
-
-    try {
-      await s3.upload({
-        Bucket: process.env.AWS_S3_BUCKET,
-        Key: `users/${email}/notes.json`,
-        Body: notesString,
-        ContentType: "application/json"
-      }).promise();
-
-      console.log(` Auto-saved notes for ${email}`);
-    } catch (err) {
-      console.error(` Failed to auto-save notes for ${email}:`, err.message);
-    }
-  }
-}, 30000); // every 30s
 
 /* START SERVER */
 app.listen(80, () => console.log("\u{1F680} Server running on http://localhost:80"));

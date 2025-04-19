@@ -318,6 +318,20 @@ function App() {
     }
   };
   
+    // Download Icon ⬇️
+    const downloadNote = (note) => {
+      if (!note) return;
+  
+      const element = document.createElement("a");
+      const file = new Blob([note.content], { type: "text/plain" });
+      const fileName = note.title.replace(/[<>:"/\\|?*\x00-\x1F]/g, "_") + ".txt";
+  
+      element.href = URL.createObjectURL(file);
+      element.download = fileName;
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+    };
   
 
   return (
@@ -341,6 +355,7 @@ function App() {
               <div className="NoteHeader">
                 <p className="NoteTitle">{note.title}</p>
                 <span className='UpdateIcon' onClick={() => updateNoteContent(note.id, noteContent)}>⬆️</span>
+                <span className='DownloadIcon' onClick={() => downloadNote(note)} >⬇️</span>
                 <span className="EditIcon" onClick={() => openTitleModal(note)}>✏️</span>
               </div>
 
@@ -511,28 +526,5 @@ function App() {
 
   );
 }
-useEffect(() => {
-  const token = localStorage.getItem("token");
-  if (!token || !notes) return;
-
-  const sendToCache = async () => {
-    try {
-      await fetch("/api/notes/cache", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ notes }),
-      });
-    } catch (err) {
-      console.error("Failed to send notes to cache", err);
-    }
-  };
-
-  const interval = setInterval(sendToCache, 5000); // send to cache every 5s
-
-  return () => clearInterval(interval);
-}, [notes]);
 
 export default App;
