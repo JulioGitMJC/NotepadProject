@@ -511,7 +511,7 @@ function App() {
 
   );
 }
-useEffect(() => {
+/*useEffect(() => {
   const token = localStorage.getItem("token");
   if (!token || !notes) return;
 
@@ -530,7 +530,7 @@ useEffect(() => {
     }
   };
 
-  const interval = setInterval(sendToCache, 5000); // send to cache every 5s
+  const interval = setInterval(sendToCache, 5000); // send to cache every 5s*/
 
   return () => clearInterval(interval);
 }, [notes]);
