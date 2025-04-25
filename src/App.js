@@ -23,14 +23,13 @@ function App() {
   const [newNoteTitle, setNewNoteTitle] = useState("");
 
   // This will handle the modal login state
-  const[LoginModel, setLoginModal] = useState(true);
+  const [LoginModel, setLoginModal] = useState(true);
 
   // States for Email and Password
   const [loginEmail, setLoginEmail] = useState("")
   const [loginPassword, setLoginPassword] = useState("")
 
   // Handler for api requests
-
   const handleLogin = async () => {
     try {
       const res = await fetch("http://localhost:80/api/login", {
@@ -40,7 +39,7 @@ function App() {
         },
         body: JSON.stringify({ email: loginEmail, password: loginPassword })
       });
-  
+
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem("token", data.token);
@@ -52,7 +51,7 @@ function App() {
             Authorization: `Bearer ${data.token}`
           }
         });
-        
+
         const notesData = await notesRes.json();
         setNotes(notesData.notes);
         const unsaved = localStorage.getItem("unsavedText");
@@ -82,7 +81,7 @@ function App() {
       alert("Something went wrong.");
     }
   };
-  
+
   const handleRegister = async () => {
     try {
       const res = await fetch("http://localhost:80/api/signup", {
@@ -92,7 +91,7 @@ function App() {
         },
         body: JSON.stringify({ username: loginEmail.split("@")[0], email: loginEmail, password: loginPassword })
       });
-  
+
       const data = await res.json();
       if (res.ok) {
         alert("Account created successfully! Now you can log in.");
@@ -109,12 +108,12 @@ function App() {
     setNotes(prev =>
       prev.map(note => note.id === id ? { ...note, content } : note)
     );
-  
+
     const token = localStorage.getItem("token");
     const updatedNotes = notes.map(note =>
       note.id === id ? { ...note, content } : note
     );
-  
+
     await fetch("http://localhost:80/api/notes", {
       method: "POST",
       headers: {
@@ -124,17 +123,17 @@ function App() {
       body: JSON.stringify({ notes: updatedNotes })
     });
   };
-  
+
   const updateNoteTitle = async (id, title) => {
     setNotes(prev =>
       prev.map(note => note.id === id ? { ...note, title } : note)
     );
-  
+
     const token = localStorage.getItem("token");
     const updatedNotes = notes.map(note =>
       note.id === id ? { ...note, title } : note
     );
-  
+
     await fetch("http://localhost:80/api/notes", {
       method: "POST",
       headers: {
@@ -144,7 +143,7 @@ function App() {
       body: JSON.stringify({ notes: updatedNotes })
     });
   };
-  
+
   // Dark Mode
   const [darkMode, setDarkMode] = useState(false);
   const toggleTheme = () => {
@@ -183,7 +182,7 @@ function App() {
     const textarea = document.querySelector('.NoteContent:not([disabled])');
     if (textarea) textarea.focus();
   }, [selectedNote]);
-  
+
   // Handles long press
   const handleLongPress = (id) => {
     setActiveNoteId((prev) => {
@@ -232,7 +231,7 @@ function App() {
   const deleteNote = async (id) => {
     const updated = notes.filter(note => note.id !== id);
     setNotes(updated);
-  
+
     const token = localStorage.getItem("token");
     await fetch("http://localhost:80/api/notes", {
       method: "POST",
@@ -243,7 +242,7 @@ function App() {
       body: JSON.stringify({ notes: updated })
     });
   };
-  
+
 
   // Delete all selected notes
   const deleteActiveNote = async () => {
@@ -251,7 +250,7 @@ function App() {
       const updated = notes.filter(note => !activeNoteId.includes(note.id));
       setNotes(updated);        // 1. Update frontend
       setActiveNoteId([]);      // 2. Clear selection
-  
+
       // 3. Save updated notes to backend
       const token = localStorage.getItem("token");
       if (token) {
@@ -266,7 +265,7 @@ function App() {
       }
     }
   };
-  
+
 
   // Open new note modal
   const openNewNoteModal = () => {
@@ -309,7 +308,7 @@ function App() {
     const text = e.target.value;
     setNoteContent(text);
     localStorage.setItem("unsavedText", text); // Save unsaved text
-  
+
     if (selectedNote) {
       const updated = notes.map(note =>
         note.id === selectedNote.id ? { ...note, content: text } : note
@@ -317,22 +316,22 @@ function App() {
       setNotes(updated);
     }
   };
-  
-    // Download Icon ⬇️
-    const downloadNote = (note) => {
-      if (!note) return;
-  
-      const element = document.createElement("a");
-      const file = new Blob([note.content], { type: "text/plain" });
-      const fileName = note.title.replace(/[<>:"/\\|?*\x00-\x1F]/g, "_") + ".txt";
-  
-      element.href = URL.createObjectURL(file);
-      element.download = fileName;
-      document.body.appendChild(element);
-      element.click();
-      document.body.removeChild(element);
-    };
-  
+
+  // Download Icon ⬇️
+  const downloadNote = (note) => {
+    if (!note) return;
+
+    const element = document.createElement("a");
+    const file = new Blob([note.content], { type: "text/plain" });
+    const fileName = note.title.replace(/[<>:"/\\|?*\x00-\x1F]/g, "_") + ".txt";
+
+    element.href = URL.createObjectURL(file);
+    element.download = fileName;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
 
   return (
     <div className={`App ${darkMode ? 'dark-mode' : ''}`}>
@@ -460,17 +459,16 @@ function App() {
               setSelectedNote(null);
               setNoteContent("");
               setActiveNoteId([]);
-            }}            
-            >
+            }}
+          >
             Sign Out
-            </button>
-
-
+          </button>
           {/* Font size buttons */}
           {/* <button className="FontSizeButton HoverEffect" onClick={() => setFontSize(fontSize + 2)}>Font Size +</button>
           <button className="FontSizeButton HoverEffect" onClick={() => setFontSize(fontSize - 2)}>Font Size -</button> */}
         </div>
 
+        {/* Font size buttons */}
         <div className="FontSizeContainer">
           <button
             className="FontSizeButton HoverEffect" onClick={() => setFontSize(fontSize + 2)}>
@@ -514,7 +512,7 @@ function App() {
         </div>
       </div>
 
-
+      {/* Main text box */}
       <textarea
         className='NoteContent'
         value={noteContent}
