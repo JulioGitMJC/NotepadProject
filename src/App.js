@@ -54,8 +54,27 @@ function App() {
         });
         
         const notesData = await notesRes.json();
-        setNotes(notesData.notes); // assuming the backend returns { notes: [...] }
+        setNotes(notesData.notes);
+        const unsaved = localStorage.getItem("unsavedText");
+        if (unsaved) {
+          setNoteContent(unsaved);
+        }
+
+
+        const lastId = localStorage.getItem("lastSelectedNoteId");
+        if (lastId) {
+          const foundNote = notesData.notes.find(note => note.id === Number(lastId));
+          if (foundNote) {
+            openNote(foundNote);
+          }
+        } else {
+          const unsaved = localStorage.getItem("unsavedText");
+          if (unsaved) {
+            setNoteContent(unsaved);
+          }
+        }
       } else {
+        const unsaved = localStorage.getItem("unsavedText");
         alert(data.error || "Login has failed");
       }
     } catch (error) {
@@ -149,6 +168,22 @@ function App() {
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (selectedNote) {
+        updateNoteContent(selectedNote.id, noteContent);
+        localStorage.setItem("lastSelectedNoteId", selectedNote.id);
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [selectedNote, noteContent]);
+
+  useEffect(() => {
+    const textarea = document.querySelector('.NoteContent:not([disabled])');
+    if (textarea) textarea.focus();
+  }, [selectedNote]);
+  
   // Handles long press
   const handleLongPress = (id) => {
     setActiveNoteId((prev) => {
@@ -271,14 +306,32 @@ function App() {
 
   // Update note content when typing
   const handleNoteContentChange = (e) => {
-    setNoteContent(e.target.value);
+    const text = e.target.value;
+    setNoteContent(text);
+    localStorage.setItem("unsavedText", text); // Save unsaved text
+  
     if (selectedNote) {
       const updated = notes.map(note =>
-        note.id === selectedNote.id ? { ...note, content: e.target.value } : note
+        note.id === selectedNote.id ? { ...note, content: text } : note
       );
       setNotes(updated);
     }
   };
+  
+    // Download Icon ⬇️
+    const downloadNote = (note) => {
+      if (!note) return;
+  
+      const element = document.createElement("a");
+      const file = new Blob([note.content], { type: "text/plain" });
+      const fileName = note.title.replace(/[<>:"/\\|?*\x00-\x1F]/g, "_") + ".txt";
+  
+      element.href = URL.createObjectURL(file);
+      element.download = fileName;
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+    };
   
 
   return (
@@ -302,6 +355,7 @@ function App() {
               <div className="NoteHeader">
                 <p className="NoteTitle">{note.title}</p>
                 <span className='UpdateIcon' onClick={() => updateNoteContent(note.id, noteContent)}>⬆️</span>
+                <span className='DownloadIcon' onClick={() => downloadNote(note)} >⬇️</span>
                 <span className="EditIcon" onClick={() => openTitleModal(note)}>✏️</span>
               </div>
 
@@ -395,17 +449,21 @@ function App() {
           <button className="ThemeButton HoverEffect" onClick={toggleTheme}> {darkMode ? 'Light Mode' : 'Dark Mode'}</button>
           <button
             className="SignOut HoverEffect"
-            onClick={() => {
-            localStorage.removeItem("token");
-            setLoginModal(true);
-            setNotes([]);
-            setSelectedNote(null);
-            setNoteContent("");
-            setActiveNoteId([]);
-          }}
-          >
-          Sign Out
-          </button>
+            onClick={async () => {
+              if (selectedNote) {
+                await updateNoteContent(selectedNote.id, noteContent); // ✅ safe here
+                localStorage.setItem("lastSelectedNoteId", selectedNote.id);
+              }
+              localStorage.removeItem("token");
+              setLoginModal(true);
+              setNotes([]);
+              setSelectedNote(null);
+              setNoteContent("");
+              setActiveNoteId([]);
+            }}            
+            >
+            Sign Out
+            </button>
 
 
           {/* Font size buttons */}
