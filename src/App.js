@@ -532,7 +532,7 @@ function App() {
 
   const interval = setInterval(sendToCache, 5000); // send to cache every 5s*/
 
-  return () => clearInterval(interval);
-}, [notes]);
+ /* return () => clearInterval(interval);
+}, [notes]);*/
 
 export default App;
