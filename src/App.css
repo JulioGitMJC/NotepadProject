@@ -75,29 +75,29 @@
 
 /* Edit note title */
 .NoteTitle {
+  width: 90%;
+  height: 15px;
   font-size: 15px;
   font-weight: bold;
-  flex-grow: 1;
-  text-align: center;
+  border: none;
+  outline: none;
+  padding: 0px;
+  /* cursor: pointer; */
 }
 
 /* Edit note title */
 .NoteHeader {
   display: flex;
   align-items: center;
-  /* justify-content: space-between; */
+  justify-content: space-between;
   width: 100%;
-}
-
-.NoteHeader::before {
-  content: "";
-  width: 50px;
 }
 
 /* Edit note title */
 .EditIcon {
   cursor: pointer;
   font-size: 14px;
+  margin-left: 0px;
   margin-bottom: 20px;
 }
 
@@ -105,19 +105,13 @@
 .UpdateIcon {
   cursor: pointer;
   font-size: 14px;
-  margin-right: 4px;
+  margin-left: -25px;
   margin-bottom: 20px;
 }
 
-.DownloadIcon{
-  cursor: pointer;
-  font-size: 14px;
-  margin-right: 4px;
-  margin-bottom: 20px;
-}
-
-.DownloadIcon:hover, .UpdateIcon:hover, .EditIcon:hover {
-  opacity: .7;
+/* Edit note title */
+.EditIcon:hover {
+  color: rgb(121, 217, 255); /* Change color on hover */
 }
 
 .TxtContainer {

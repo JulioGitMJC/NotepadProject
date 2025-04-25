@@ -74,3 +74,33 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+running server
+
+1.open ec2
+
+2. Install Node.js, npm, git, and serve
+
+curl -fsSL https://rpm.nodesource.com/setup_18.x | sudo bash -
+sudo yum install -y nodejs git
+sudo npm install -g serve
+
+3 Clone your GitHub repo and switch to the Test branch
+git clone https://github.com/JulioGitMJC/NotepadProject.git of fro certain branches put git clone --branch {branch name} and blah balha blah
+cd NotepadProject
+
+
+4. Install dependencies and build React, in the root folder, so just open the main notepad folder wih cd
+
+npm install
+npm run build
+
+5. Run the server with serve on port 80
+
+sudo npx serve -s build -l 80
+
+6. Open your site in the browser:
+http://YOUR_PUBLIC_EC2_IP
+
+7. if sever stops make sure port 80 is open and ready to use and run
+sudo npx serve -s build -l 80
